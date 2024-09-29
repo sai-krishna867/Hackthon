@@ -57,11 +57,17 @@ def get_or_create_thread(client):
         st.session_state.GLOBAL_THREAD = client.beta.threads.create()
     return st.session_state.GLOBAL_THREAD
 
+def printer(response):
+    for word in response.split():
+        for i in word:
+            yield i 
+            time.sleep(0.05)
+        yield " "
+        time.sleep(0.05)
 # Helper function to handle the conversation
 def chat_with_assistant(client, user_input):
     # Get or create the thread
     thread = get_or_create_thread(client)
-
     # Send user input to the thread
     client.beta.threads.messages.create(
         thread_id=thread.id,
@@ -88,7 +94,7 @@ def chat_with_assistant(client, user_input):
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
+import time
 # Add custom CSS for the chat input field
 st.markdown("""
     <style>
@@ -108,7 +114,6 @@ if user_input:
 
     with st.chat_message("user"):
         st.write(user_input)
-
     assistant_responses = chat_with_assistant(client, user_input)
 
     # Display assistant response in chat history
@@ -116,4 +121,4 @@ if user_input:
         st.session_state.messages.append({"role": "Medifriend", "content": assistant_responses[0]})
 
         with st.chat_message("Medifriend"):
-            st.write(assistant_responses[0])
+            st.write_stream(printer(assistant_responses[0]))
