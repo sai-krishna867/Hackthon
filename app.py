@@ -121,4 +121,4 @@ if user_input:
         st.session_state.messages.append({"role": "Medifriend", "content": assistant_responses[0]})
 
         with st.chat_message("Medifriend"):
-            st.write_stream(printer(assistant_responses[0]))
+            st.write(assistant_responses[0])
